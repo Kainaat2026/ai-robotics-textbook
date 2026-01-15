@@ -1,0 +1,1054 @@
+openapi: 3.0.3
+info:
+  title: AI-Powered Physical AI & Humanoid Robotics Textbook API
+  description: |
+    Backend API for the interactive textbook platform providing AI-powered features:
+    - RAG chatbot with citations
+    - Text selection AI explanations
+    - Quiz generation and attempt tracking
+    - User authentication and progress tracking
+    - Content personalization based on user background
+    - Urdu translation with RTL support
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@example.com
+  license:
+    name: MIT
+
+servers:
+  - url: https://api.textbook.example.com/api
+    description: Production server
+  - url: http://localhost:8000/api
+    description: Development server
+
+tags:
+  - name: Authentication
+    description: User signup, login, and session management
+  - name: Chatbot
+    description: RAG-powered chatbot for Q&A with citations
+  - name: Quiz
+    description: Quiz generation, attempts, and scoring
+  - name: Progress
+    description: User progress tracking across chapters
+  - name: Personalization
+    description: Content adaptation based on user skill level
+  - name: Translation
+    description: Urdu translation with technical term handling
+  - name: User
+    description: User profile and account management
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token obtained from /auth/login endpoint
+
+  schemas:
+    # Authentication Schemas
+    SignupRequest:
+      type: object
+      required:
+        - email
+        - password
+        - python_level
+        - ai_experience
+        - robotics_experience
+      properties:
+        email:
+          type: string
+          format: email
+          example: "student@example.com"
+        password:
+          type: string
+          format: password
+          minLength: 8
+          example: "SecurePass123"
+        python_level:
+          type: string
+          enum: [beginner, intermediate, advanced]
+          example: "intermediate"
+        ai_experience:
+          type: string
+          enum: [beginner, intermediate, advanced]
+          example: "beginner"
+        robotics_experience:
+          type: string
+          enum: [beginner, intermediate, advanced]
+          example: "beginner"
+        has_rtx_gpu:
+          type: boolean
+          default: false
+        has_jetson:
+          type: boolean
+          default: false
+        has_robot:
+          type: boolean
+          default: false
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+
+    AuthResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+          description: JWT access token (24-hour expiration)
+        token_type:
+          type: string
+          enum: [bearer]
+        user:
+          $ref: '#/components/schemas/User'
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        created_at:
+          type: string
+          format: date-time
+        last_login:
+          type: string
+          format: date-time
+        profile:
+          $ref: '#/components/schemas/UserProfile'
+
+    UserProfile:
+      type: object
+      properties:
+        python_level:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        ai_experience:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        robotics_experience:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        has_rtx_gpu:
+          type: boolean
+        has_jetson:
+          type: boolean
+        has_robot:
+          type: boolean
+
+    # Chatbot Schemas
+    ChatRequest:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          maxLength: 2000
+          example: "What are ROS 2 topics?"
+        conversation_id:
+          type: string
+          format: uuid
+          description: Optional - for follow-up questions with context
+        language:
+          type: string
+          enum: [en, ur]
+          default: en
+        chapter_context:
+          type: string
+          description: Current chapter ID for scoped retrieval
+          example: "chapter-03-ros2-topics"
+
+    ChatResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: AI-generated response
+        citations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Citation'
+        conversation_id:
+          type: string
+          format: uuid
+        tokens_used:
+          type: integer
+          description: OpenAI tokens consumed
+
+    Citation:
+      type: object
+      properties:
+        chapter_id:
+          type: string
+          example: "chapter-03-ros2-topics"
+        section:
+          type: string
+          example: "2.1 Publisher-Subscriber Pattern"
+        title:
+          type: string
+          example: "ROS 2 Topics: Publisher-Subscriber Communication"
+        relevance_score:
+          type: number
+          format: float
+          description: Vector similarity score (0-1)
+
+    TextSelectionRequest:
+      type: object
+      required:
+        - selected_text
+      properties:
+        selected_text:
+          type: string
+          maxLength: 500
+          example: "URDF format"
+        chapter_context:
+          type: string
+          example: "chapter-06-gazebo-intro"
+        surrounding_context:
+          type: string
+          maxLength: 1000
+          description: Optional - surrounding paragraph for better context
+
+    TextSelectionResponse:
+      type: object
+      properties:
+        explanation:
+          type: string
+          description: AI-generated contextual explanation
+        related_concepts:
+          type: array
+          items:
+            type: string
+          example: ["SDF format", "Robot kinematics", "Gazebo simulation"]
+        citations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Citation'
+
+    # Quiz Schemas
+    Quiz:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        chapter_id:
+          type: string
+        title:
+          type: string
+        instructions:
+          type: string
+        passing_score:
+          type: integer
+          minimum: 0
+          maximum: 100
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuizQuestion'
+
+    QuizQuestion:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        question_text:
+          type: string
+        question_type:
+          type: string
+          enum: [multiple_choice, true_false, code_completion]
+        options:
+          type: array
+          items:
+            type: string
+          description: Present for multiple_choice questions only
+        difficulty:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        section_reference:
+          type: string
+          example: "2.1 ROS 2 Topics"
+        order_index:
+          type: integer
+
+    QuizSubmission:
+      type: object
+      required:
+        - quiz_id
+        - responses
+      properties:
+        quiz_id:
+          type: string
+          format: uuid
+        responses:
+          type: array
+          items:
+            type: object
+            properties:
+              question_id:
+                type: string
+                format: uuid
+              user_answer:
+                type: string
+
+    QuizResult:
+      type: object
+      properties:
+        attempt_id:
+          type: string
+          format: uuid
+        score:
+          type: integer
+          minimum: 0
+          maximum: 100
+        passed:
+          type: boolean
+        feedback:
+          type: array
+          items:
+            type: object
+            properties:
+              question_id:
+                type: string
+                format: uuid
+              is_correct:
+                type: boolean
+              correct_answer:
+                type: string
+              explanation:
+                type: string
+        time_spent_seconds:
+          type: integer
+
+    # Progress Schemas
+    ProgressSummary:
+      type: object
+      properties:
+        total_chapters:
+          type: integer
+        completed_chapters:
+          type: integer
+        completion_percentage:
+          type: number
+          format: float
+        total_time_minutes:
+          type: integer
+        chapters:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChapterProgress'
+
+    ChapterProgress:
+      type: object
+      properties:
+        chapter_id:
+          type: string
+        status:
+          type: string
+          enum: [not_started, in_progress, completed]
+        quiz_score:
+          type: integer
+          minimum: 0
+          maximum: 100
+        time_spent_seconds:
+          type: integer
+        is_bookmarked:
+          type: boolean
+        last_accessed:
+          type: string
+          format: date-time
+        completed_at:
+          type: string
+          format: date-time
+
+    UpdateProgressRequest:
+      type: object
+      properties:
+        chapter_id:
+          type: string
+        status:
+          type: string
+          enum: [not_started, in_progress, completed]
+        time_spent_seconds:
+          type: integer
+          minimum: 0
+
+    # Personalization Schemas
+    PersonalizeRequest:
+      type: object
+      required:
+        - chapter_id
+      properties:
+        chapter_id:
+          type: string
+        content:
+          type: string
+          description: Original chapter content (markdown)
+
+    PersonalizeResponse:
+      type: object
+      properties:
+        personalized_content:
+          type: string
+          description: Adapted content in markdown format
+        skill_level_applied:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        modifications_made:
+          type: array
+          items:
+            type: string
+          description: List of changes (e.g., "Added prerequisite links", "Simplified code examples")
+
+    # Translation Schemas
+    TranslateRequest:
+      type: object
+      required:
+        - content
+        - target_language
+      properties:
+        content:
+          type: string
+          description: Content to translate (markdown format)
+        target_language:
+          type: string
+          enum: [ur]
+          description: Currently only Urdu supported
+        chapter_id:
+          type: string
+          description: For caching and context
+
+    TranslateResponse:
+      type: object
+      properties:
+        translated_content:
+          type: string
+          description: Translated content (markdown with RTL markers)
+        source_language:
+          type: string
+          enum: [en]
+        target_language:
+          type: string
+          enum: [ur]
+        terminology_used:
+          type: array
+          items:
+            type: object
+            properties:
+              english_term:
+                type: string
+              urdu_translation:
+                type: string
+              transliterated:
+                type: boolean
+
+    # User Management Schemas
+    Bookmark:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        chapter_id:
+          type: string
+        section_heading:
+          type: string
+        notes:
+          type: string
+          maxLength: 1000
+        created_at:
+          type: string
+          format: date-time
+
+    CreateBookmarkRequest:
+      type: object
+      required:
+        - chapter_id
+      properties:
+        chapter_id:
+          type: string
+        section_heading:
+          type: string
+        notes:
+          type: string
+          maxLength: 1000
+
+    # Error Schemas
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Invalid request"
+        detail:
+          type: string
+          example: "Email already registered"
+        error_code:
+          type: string
+          example: "DUPLICATE_EMAIL"
+
+paths:
+  # Authentication Endpoints
+  /auth/signup:
+    post:
+      tags:
+        - Authentication
+      summary: Register new user with background questionnaire
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Invalid input or email already registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many signup attempts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Authenticate user and receive JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Too many login attempts (rate limited)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/me:
+    get:
+      tags:
+        - Authentication
+      summary: Get current user profile
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: User profile retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized (invalid or expired token)
+
+  # Chatbot Endpoints
+  /chat:
+    post:
+      tags:
+        - Chatbot
+      summary: Send message to RAG chatbot
+      description: |
+        Ask questions about textbook content. Responses include citations to source chapters/sections.
+        Supports follow-up questions with conversation context retention.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+      responses:
+        '200':
+          description: Chatbot response with citations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+        '400':
+          description: Invalid request (message too long, invalid conversation_id)
+        '401':
+          description: Unauthorized (anonymous users can chat but without conversation persistence)
+        '429':
+          description: Rate limited (too many requests)
+        '500':
+          description: OpenAI API error or vector search failure
+
+  /chat/text-selection:
+    post:
+      tags:
+        - Chatbot
+      summary: Get AI explanation for selected text
+      description: |
+        Context-aware explanations for text highlighted in chapters.
+        Uses chapter context and surrounding text for better understanding.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TextSelectionRequest'
+      responses:
+        '200':
+          description: Explanation generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TextSelectionResponse'
+        '400':
+          description: Selected text too long (>500 chars)
+        '429':
+          description: Rate limited
+
+  /chat/conversation/{conversation_id}:
+    get:
+      tags:
+        - Chatbot
+      summary: Retrieve conversation history
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: conversation_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Conversation history retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conversation_id:
+                    type: string
+                    format: uuid
+                  language:
+                    type: string
+                    enum: [en, ur]
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        role:
+                          type: string
+                          enum: [user, assistant]
+                        message:
+                          type: string
+                        citations:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/Citation'
+                        created_at:
+                          type: string
+                          format: date-time
+        '404':
+          description: Conversation not found
+
+  # Quiz Endpoints
+  /quiz/{chapter_id}:
+    get:
+      tags:
+        - Quiz
+      summary: Get quiz for a chapter
+      description: |
+        Retrieves auto-generated quiz for specified chapter.
+        Questions adapted to user's skill level if authenticated.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: chapter_id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "chapter-03-ros2-topics"
+      responses:
+        '200':
+          description: Quiz retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+        '404':
+          description: Chapter or quiz not found
+        '500':
+          description: Quiz generation failed
+
+  /quiz/submit:
+    post:
+      tags:
+        - Quiz
+      summary: Submit quiz answers and get results
+      description: |
+        Submits user answers, calculates score, and provides immediate feedback.
+        Updates user progress with quiz score.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizSubmission'
+      responses:
+        '200':
+          description: Quiz scored successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizResult'
+        '400':
+          description: Invalid submission (missing answers, invalid quiz_id)
+        '401':
+          description: Unauthorized (must be logged in)
+
+  /quiz/attempts/{chapter_id}:
+    get:
+      tags:
+        - Quiz
+      summary: Get quiz attempt history for a chapter
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: chapter_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Attempt history retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chapter_id:
+                    type: string
+                  attempts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        attempt_id:
+                          type: string
+                          format: uuid
+                        score:
+                          type: integer
+                        passed:
+                          type: boolean
+                        completed_at:
+                          type: string
+                          format: date-time
+                  best_score:
+                    type: integer
+        '401':
+          description: Unauthorized
+
+  # Progress Endpoints
+  /progress:
+    get:
+      tags:
+        - Progress
+      summary: Get user's overall progress summary
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Progress summary retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProgressSummary'
+        '401':
+          description: Unauthorized
+
+  /progress/{chapter_id}:
+    get:
+      tags:
+        - Progress
+      summary: Get progress for a specific chapter
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: chapter_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Chapter progress retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChapterProgress'
+        '404':
+          description: Chapter not found
+
+    put:
+      tags:
+        - Progress
+      summary: Update progress for a chapter
+      description: |
+        Updates status and time spent. Called when user navigates to/from chapter.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: chapter_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProgressRequest'
+      responses:
+        '200':
+          description: Progress updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChapterProgress'
+        '400':
+          description: Invalid request
+        '401':
+          description: Unauthorized
+
+  # Personalization Endpoints
+  /personalize:
+    post:
+      tags:
+        - Personalization
+      summary: Get personalized chapter content
+      description: |
+        Adapts content based on user's skill level (beginner/intermediate/advanced).
+        Beginner: More explanations, simpler examples, prerequisite links.
+        Advanced: Focuses on advanced patterns, optimization, edge cases.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PersonalizeRequest'
+      responses:
+        '200':
+          description: Content personalized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonalizeResponse'
+        '400':
+          description: Invalid chapter_id or missing content
+        '401':
+          description: Unauthorized (must be logged in for personalization)
+        '429':
+          description: Rate limited
+
+  # Translation Endpoints
+  /translate:
+    post:
+      tags:
+        - Translation
+      summary: Translate content to Urdu
+      description: |
+        Translates chapter content to Urdu while preserving:
+        - Markdown formatting
+        - Code blocks (kept in English)
+        - Technical terminology accuracy
+        Returns content with RTL markers for proper rendering.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TranslateRequest'
+      responses:
+        '200':
+          description: Content translated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TranslateResponse'
+        '400':
+          description: Invalid request or unsupported language
+        '429':
+          description: Rate limited
+        '500':
+          description: Translation service error
+
+  # User Management Endpoints
+  /user/bookmarks:
+    get:
+      tags:
+        - User
+      summary: Get user's bookmarks
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Bookmarks retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Bookmark'
+        '401':
+          description: Unauthorized
+
+    post:
+      tags:
+        - User
+      summary: Create a bookmark
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBookmarkRequest'
+      responses:
+        '201':
+          description: Bookmark created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bookmark'
+        '400':
+          description: Invalid request or duplicate bookmark
+        '401':
+          description: Unauthorized
+
+  /user/bookmarks/{bookmark_id}:
+    delete:
+      tags:
+        - User
+      summary: Delete a bookmark
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: bookmark_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Bookmark deleted
+        '404':
+          description: Bookmark not found
+        '401':
+          description: Unauthorized
+
+  /user/account:
+    delete:
+      tags:
+        - User
+      summary: Delete user account (GDPR compliance)
+      description: |
+        Soft deletes user account. Data purged after 30-day grace period.
+      security:
+        - BearerAuth: []
+      responses:
+        '204':
+          description: Account deletion initiated
+        '401':
+          description: Unauthorized
+
+  /user/data:
+    get:
+      tags:
+        - User
+      summary: Export all user data (GDPR compliance)
+      description: |
+        Returns JSON export of all user data: profile, progress, bookmarks, chat history, quiz attempts.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Data export generated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  progress:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ChapterProgress'
+                  bookmarks:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Bookmark'
+                  chat_conversations:
+                    type: array
+                    items:
+                      type: object
+                  quiz_attempts:
+                    type: array
+                    items:
+                      type: object
+        '401':
+          description: Unauthorized
+
+security:
+  - BearerAuth: []

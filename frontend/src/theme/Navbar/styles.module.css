@@ -1,0 +1,21 @@
+/**
+ * Custom Navbar Styles
+ */
+
+.navbarWrapper {
+  position: relative;
+}
+
+.userMenuContainer {
+  position: absolute;
+  top: 50%;
+  right: 24px;
+  transform: translateY(-50%);
+  z-index: 100;
+}
+
+@media (max-width: 996px) {
+  .userMenuContainer {
+    right: 16px;
+  }
+}

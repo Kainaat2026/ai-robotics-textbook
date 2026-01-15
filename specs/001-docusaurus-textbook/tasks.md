@@ -1,0 +1,435 @@
+# Implementation Tasks: AI-Powered Physical AI & Humanoid Robotics Textbook
+
+**Feature**: `001-docusaurus-textbook`
+**Branch**: `001-docusaurus-textbook`
+**Created**: 2026-01-09
+**Status**: Ready for Implementation
+
+## Overview
+
+This document breaks down the implementation into executable tasks organized by user story priority. The MVP focuses on P1 features (Core Textbook + RAG Chatbot) to deliver immediate value, with P2/P3 features available for incremental enhancement.
+
+**Total Tasks**: 95 tasks across 9 phases
+**MVP Scope** (Recommended): Phase 1-4 (Setup + Foundational + US1 + US2) = 42 tasks
+**Full Implementation**: All 9 phases = 95 tasks
+
+---
+
+## Execution Strategy
+
+### MVP-First Approach (Recommended for Hackathon)
+1. **Phase 1**: Setup (7 tasks) - Project initialization
+2. **Phase 2**: Foundational (8 tasks) - Shared infrastructure
+3. **Phase 3**: User Story 1 - Core Textbook (15 tasks) - Static content delivery
+4. **Phase 4**: User Story 2 - RAG Chatbot (12 tasks) - AI-powered Q&A
+
+**MVP Deliverable**: Functional textbook with 10+ chapters and working RAG chatbot with citations (<2s response time)
+
+### Incremental Enhancement Path
+5. **Phase 5**: User Story 3 - Text Selection AI (8 tasks)
+6. **Phase 6**: User Story 4 - Authentication & Progress (12 tasks)
+7. **Phase 7**: User Story 5 - Personalization (10 tasks)
+8. **Phase 8**: User Story 6 - Urdu Translation (9 tasks)
+9. **Phase 9**: User Story 7 - Quiz System (14 tasks)
+
+---
+
+## Task Phases
+
+### Phase 1: Setup (7 tasks)
+
+**Goal**: Initialize project structure, install dependencies, configure development environment
+
+**Tasks**:
+
+- [X] T001 Initialize Docusaurus project with TypeScript template in project root
+- [X] T002 [P] Create backend directory structure (backend/src/{models,services,api,db,utils})
+- [X] T003 [P] Install frontend dependencies (npm: docusaurus, react, axios, typescript)
+- [X] T004 [P] Install backend dependencies (pip: fastapi, langchain, openai, qdrant-client, asyncpg, alembic, better-auth, pytest)
+- [X] T005 Configure environment variables template files (.env.example for frontend and backend)
+- [X] T006 [P] Create .gitignore with Node.js and Python patterns
+- [X] T007 [P] Create README.md with quickstart instructions from specs/001-docusaurus-textbook/quickstart.md
+
+**Completion Criteria**:
+- `npm start` runs Docusaurus development server
+- `uvicorn backend.src.main:app --reload` starts FastAPI server
+- Environment variable templates present
+
+---
+
+### Phase 2: Foundational Infrastructure (8 tasks)
+
+**Goal**: Set up shared infrastructure required by multiple user stories (database, vector store, API framework)
+
+**Tasks**:
+
+- [X] T008 Configure Neon Postgres connection in backend/src/db/connection.py with connection pooling
+- [X] T009 Create Alembic configuration and initial migration in backend/alembic/versions/001_initial_schema.py
+- [X] T010 [P] Implement Qdrant client wrapper in backend/src/utils/vector_store.py with connection validation
+- [X] T011 [P] Implement OpenAI embeddings utility in backend/src/utils/embeddings.py (text-embedding-3-small)
+- [X] T012 Create FastAPI main application in backend/src/main.py with CORS and error handling
+- [X] T013 [P] Implement security utilities in backend/src/utils/security.py (encryption, JWT, password hashing)
+- [X] T014 Configure Docusaurus config in docusaurus.config.js with sidebar, plugins, theme customization
+- [X] T015 Create sidebar configuration in sidebars.js for 4-module structure
+
+**Completion Criteria**:
+- Database connection successful
+- Qdrant client connects to cloud instance
+- FastAPI serves OpenAPI docs at /docs
+- Docusaurus renders with configured sidebar
+
+---
+
+### Phase 3: User Story 1 - Core Textbook Reading Experience [P1] (15 tasks)
+
+**Story Goal**: Deliver readable, structured textbook content with 10+ chapters across 4 modules, responsive on all devices
+
+**Independent Test**: Deploy site, navigate chapters on desktop/tablet/mobile, verify content renders with diagrams and code examples
+
+**Tasks**:
+
+- [X] T016 [US1] Create docs directory structure (docs/{module-1-ros2,module-2-simulation,module-3-isaac,module-4-vla-capstone})
+- [X] T017 [P] [US1] Write Chapter 1: Introduction to Physical AI in docs/module-1-ros2/chapter-01-intro-physical-ai.md
+- [X] T018 [P] [US1] Write Chapter 2: ROS 2 Fundamentals in docs/module-1-ros2/chapter-02-ros2-fundamentals.md
+- [X] T019 [P] [US1] Write Chapter 3: ROS 2 Topics in docs/module-1-ros2/chapter-03-ros2-topics.md
+- [X] T020 [P] [US1] Write Chapter 4: ROS 2 Services in docs/module-1-ros2/chapter-04-ros2-services.md
+- [X] T021 [P] [US1] Write Chapter 5: ROS 2 Actions in docs/module-1-ros2/chapter-05-ros2-actions.md
+- [X] T022 [P] [US1] Write Chapter 6: Gazebo Simulation in docs/module-2-simulation/chapter-06-gazebo-intro.md
+- [X] T023 [P] [US1] Write Chapter 7: Unity Robotics in docs/module-2-simulation/chapter-07-unity-robotics.md
+- [X] T024 [P] [US1] Write Chapter 8: NVIDIA Isaac SDK in docs/module-3-isaac/chapter-08-isaac-sdk.md
+- [X] T025 [P] [US1] Write Chapter 9: Isaac Sim in docs/module-3-isaac/chapter-09-isaac-sim.md
+- [X] T026 [P] [US1] Write Chapter 10: Sim-to-Real Transfer in docs/module-3-isaac/chapter-10-sim-to-real.md
+- [X] T027 [P] [US1] Write Chapter 11: Humanoid Development in docs/module-4-vla-capstone/chapter-11-humanoid-dev.md
+- [X] T028 [P] [US1] Write Chapter 12: VLA Models in docs/module-4-vla-capstone/chapter-12-vla-models.md
+- [X] T029 [P] [US1] Write Chapter 13: Capstone Project in docs/module-4-vla-capstone/chapter-13-capstone-project.md
+- [X] T030 [US1] Add chapter frontmatter (id, title, module, learning objectives, estimated time) to all 13 chapters
+
+**Chapter Content Template** (each chapter must include):
+- Frontmatter: id, title, module number, week number, learning objectives (3-5 outcomes), estimated reading time
+- Introduction: Context and why this topic matters
+- Theoretical explanations with diagrams (create/source images in docs-images/)
+- Code examples: Python/ROS 2 snippets with syntax highlighting and inline comments
+- Practical exercises: Hands-on activities with expected outputs
+- Summary: Key takeaways in bullet format
+- References: Links to official documentation
+
+**Completion Criteria**:
+- 13 chapters written covering 4 modules
+- Each chapter includes learning objectives, diagrams, code examples, exercises, summary
+- `npm start` renders all chapters with proper navigation
+- Responsive on mobile (test with browser dev tools)
+
+---
+
+### Phase 4: User Story 2 - RAG-Powered Chatbot [P1] (12 tasks)
+
+**Story Goal**: Implement AI chatbot that answers questions about textbook content with citations, <2s response time
+
+**Independent Test**: Ask question "What are ROS 2 topics?", verify response includes explanation and citation to Chapter 3, Section 2.1 within 2 seconds
+
+**Tasks**:
+
+- [X] T031 [US2] Create Chapter entity model in backend/src/models/chapter.py (Pydantic model for metadata)
+- [X] T032 [US2] Create ChatConversation model in backend/src/models/chat.py with language enum (en, ur)
+- [X] T033 [US2] Create ChatMessage model in backend/src/models/chat.py with role enum (user, assistant) and citations JSONB
+- [X] T034 [US2] Implement chapter indexing script in backend/scripts/index_chapters.py (reads markdown, chunks, generates embeddings, uploads to Qdrant)
+- [X] T035 [US2] Implement RAG service in backend/src/services/rag_service.py using LangChain (query reformulation, retrieval, generation with citations)
+- [X] T036 [US2] Create chat API endpoints in backend/src/api/chatbot.py (POST /api/chat, GET /api/chat/conversation/{id})
+- [X] T037 [US2] Implement conversation repository in backend/src/db/repositories/chat_repo.py with async methods
+- [X] T038 [US2] Create ChatbotWidget React component in src/components/Chatbot/ChatbotWidget.tsx (floating button, toggle state)
+- [X] T039 [US2] Create ChatbotInterface React component in src/components/Chatbot/ChatbotInterface.tsx (message list, input, send button)
+- [X] T040 [US2] Create ChatbotService in src/components/Chatbot/ChatbotService.ts (API calls with Axios, error handling)
+- [X] T041 [US2] Integrate ChatbotWidget into Docusaurus theme in src/theme/Root.tsx (global provider, accessible from all pages)
+- [ ] T042 [US2] Run chapter indexing script to populate Qdrant with embeddings for all 13 chapters
+
+**Implementation Notes**:
+- **Chunking Strategy**: Split chapters into ~500-token chunks with 50-token overlap
+- **Retrieval**: Use `top_k=3` for balance between context and speed
+- **Prompt Template**: "You are a helpful assistant for a Physical AI & Humanoid Robotics textbook. Answer the question based ONLY on the following context. Always cite the chapter and section. Context: {context} Question: {question}"
+- **Citations Format**: `[{"chapter_id": "chapter-03-ros2-topics", "section": "2.1 Publisher-Subscriber Pattern", "title": "ROS 2 Topics"}]`
+
+**Completion Criteria**:
+- Chatbot button visible on all chapter pages
+- Clicking button opens chat interface
+- Asking "What are ROS 2 topics?" returns answer with citation within 2 seconds
+- Follow-up questions maintain context
+- Out-of-scope questions handled gracefully
+
+---
+
+### Phase 5: User Story 3 - Contextual Text Selection AI [P2] (8 tasks)
+
+**Story Goal**: Enable users to select text and get instant AI explanations without breaking reading flow
+
+**Independent Test**: Highlight "URDF format" in Chapter 6, click "Ask AI", verify contextual explanation appears within 2 seconds
+
+**Tasks**:
+
+- [X] T043 [US3] Create SelectionHandler React component in src/components/TextSelection/SelectionHandler.tsx (detect text selection, show tooltip)
+- [X] T044 [US3] Create SelectionTooltip React component in src/components/TextSelection/SelectionTooltip.tsx ("Ask AI" button UI)
+- [X] T045 [US3] Implement text selection API endpoint in backend/src/api/chatbot.py (POST /api/chat/text-selection)
+- [X] T046 [US3] Extend RAG service with text selection method in backend/src/services/rag_service.py (contextual explanation generation)
+- [X] T047 [US3] Create TextSelectionRequest/Response Pydantic models in backend/src/models/chat.py
+- [X] T048 [US3] Integrate SelectionHandler into Docusaurus DocItem theme in src/theme/DocItem/index.tsx
+- [X] T049 [US3] Add text selection state management to ChatContext in src/contexts/ChatContext.tsx
+- [X] T050 [US3] Style SelectionTooltip with positioning logic in src/components/TextSelection/SelectionTooltip.module.css (floating above selected text)
+
+**Completion Criteria**:
+- Selecting text in any chapter shows "Ask AI" tooltip
+- Clicking tooltip sends selected text + chapter context to API
+- Response appears in tooltip or expands to chatbot interface
+- Works on mobile with touch selection
+
+---
+
+### Phase 6: User Story 4 - User Authentication and Progress Tracking [P2] (12 tasks)
+
+**Story Goal**: Enable user signup, login, and progress tracking across sessions with secure data storage
+
+**Independent Test**: Sign up, complete Chapter 2, log out, log back in, verify progress shows Chapter 2 as completed
+
+**Tasks**:
+
+- [X] T051 [US4] Create User model in backend/src/models/user.py (UUID id, email, password_hash, timestamps)
+- [X] T052 [US4] Create UserProfile model in backend/src/models/user.py (skill levels, hardware flags)
+- [X] T053 [US4] Create UserProgress model in backend/src/models/progress.py (chapter_id, status, quiz_score, time_spent)
+- [X] T054 [US4] Create database tables migration in backend/alembic/versions/002_auth_and_progress.py (users, user_profiles, user_progress)
+- [X] T055 [US4] Implement auth service in backend/src/services/auth_service.py with Better-auth.com integration (signup, login, JWT generation)
+- [X] T056 [US4] Create auth API endpoints in backend/src/api/auth.py (POST /api/auth/signup, POST /api/auth/login, GET /api/auth/me)
+- [X] T057 [US4] Create progress API endpoints in backend/src/api/progress.py (GET /api/progress, PUT /api/progress/{chapter_id})
+- [X] T058 [US4] Implement user repository in backend/src/db/repositories/user_repo.py with async CRUD methods
+- [X] T059 [US4] Implement progress repository in backend/src/db/repositories/progress_repo.py with chapter tracking
+- [X] T060 [US4] Create SignupForm React component in src/components/Auth/SignupForm.tsx (email, password, background questionnaire)
+- [X] T061 [US4] Create LoginForm React component in src/components/Auth/LoginForm.tsx (email, password fields)
+- [X] T062 [US4] Create UserContext in src/components/Auth/UserContext.tsx (auth state, login/logout methods, JWT storage)
+
+**Completion Criteria**:
+- Signup form collects email, password, software/hardware background
+- Login successful with valid credentials
+- JWT token stored in localStorage
+- Progress updated when navigating chapters
+- Progress persists across sessions
+
+---
+
+### Phase 7: User Story 5 - Personalized Content [P3] (10 tasks)
+
+**Story Goal**: Adapt chapter content based on user's skill level (beginner/intermediate/advanced)
+
+**Independent Test**: Create beginner and advanced accounts, click "Personalize" on Chapter 3, verify content differs appropriately
+
+**Tasks**:
+
+- [ ] T063 [US5] Extend UserProfile with personalization settings in backend/src/models/user.py
+- [ ] T064 [US5] Create personalization service in backend/src/services/personalization_service.py (OpenAI GPT-4 content adaptation)
+- [ ] T065 [US5] Create personalization API endpoint in backend/src/api/personalization.py (POST /api/personalize with chapter_id, content)
+- [ ] T066 [US5] Create PersonalizeButton React component in src/components/Personalization/PersonalizeButton.tsx (one-click trigger)
+- [ ] T067 [US5] Implement content caching in backend (Redis or in-memory LRU) to avoid re-personalizing same content
+- [ ] T068 [US5] Create personalization prompt template for beginner level (more explanations, simpler examples, prerequisite links)
+- [ ] T069 [US5] Create personalization prompt template for advanced level (assumes knowledge, focuses on optimization, edge cases)
+- [ ] T070 [US5] Integrate PersonalizeButton into chapter pages in src/theme/DocItem/index.tsx
+- [ ] T071 [US5] Add toggle for viewing original vs personalized content in chapter UI
+- [ ] T072 [US5] Store personalization preferences in user profile (auto-personalize on chapter load)
+
+**Completion Criteria**:
+- Beginner user sees simpler explanations and more context
+- Advanced user sees concise content focused on advanced topics
+- Hardware-aware recommendations based on user's equipment
+- Toggle switches between original and personalized content
+
+---
+
+### Phase 8: User Story 6 - Urdu Translation [P3] (9 tasks)
+
+**Story Goal**: Provide one-click translation to Urdu with RTL formatting and technical term accuracy
+
+**Independent Test**: Click "Translate to Urdu" on Chapter 3, verify text is in Urdu, code blocks remain English, RTL formatting works
+
+**Tasks**:
+
+- [ ] T073 [US6] Create translation service in backend/src/services/translation_service.py (OpenAI GPT-4 with Urdu prompts)
+- [ ] T074 [US6] Create translation API endpoint in backend/src/api/translation.py (POST /api/translate with content, target_language)
+- [ ] T075 [US6] Implement translation caching in database (translations table with content_hash, source_lang, target_lang, translated_text)
+- [ ] T076 [US6] Create translation prompt template preserving markdown, code blocks, technical terms
+- [ ] T077 [US6] Create LanguageToggle React component in src/components/Translation/LanguageToggle.tsx (EN/UR switch)
+- [ ] T078 [US6] Implement RTL CSS styles in src/css/rtl.css (text alignment, UI mirroring)
+- [ ] T079 [US6] Add RTL detection and class application in src/theme/Root.tsx based on language context
+- [ ] T080 [US6] Integrate LanguageToggle into Docusaurus navbar in docusaurus.config.js
+- [ ] T081 [US6] Test Urdu translation on mobile devices for proper RTL rendering
+
+**Completion Criteria**:
+- Clicking "Urdu" translates chapter text to Urdu
+- Code blocks remain in English
+- Technical terms transliterated appropriately
+- RTL formatting works (text flows right-to-left)
+- Chatbot responds in Urdu when language is set to Urdu
+
+---
+
+### Phase 9: User Story 7 - Auto-Generated Quizzes [P3] (14 tasks)
+
+**Story Goal**: Generate quizzes for each chapter with immediate feedback and progress tracking
+
+**Independent Test**: Complete Chapter 2, click "Take Quiz", answer questions, verify immediate feedback with explanations and score saved
+
+**Tasks**:
+
+- [ ] T082 [US7] Create Quiz model in backend/src/models/quiz.py (chapter_id, title, instructions, passing_score)
+- [ ] T083 [US7] Create QuizQuestion model in backend/src/models/quiz.py (question_text, type enum, options JSONB, correct_answer, explanation, difficulty)
+- [ ] T084 [US7] Create QuizAttempt model in backend/src/models/quiz.py (user_id, quiz_id, score, passed, started_at, completed_at)
+- [ ] T085 [US7] Create QuizResponse model in backend/src/models/quiz.py (attempt_id, question_id, user_answer, is_correct)
+- [ ] T086 [US7] Create quiz tables migration in backend/alembic/versions/003_quiz_system.py
+- [ ] T087 [US7] Implement quiz generation service in backend/src/services/quiz_service.py (OpenAI GPT-4 generates questions from chapter content)
+- [ ] T088 [US7] Create quiz generation script in backend/scripts/generate_quizzes.py (batch generate quizzes for all chapters)
+- [ ] T089 [US7] Create quiz API endpoints in backend/src/api/quiz.py (GET /api/quiz/{chapter_id}, POST /api/quiz/submit, GET /api/quiz/attempts/{chapter_id})
+- [ ] T090 [US7] Implement quiz repository in backend/src/db/repositories/quiz_repo.py with scoring logic
+- [ ] T091 [US7] Create QuizWidget React component in src/components/Quiz/QuizWidget.tsx (quiz UI with question navigation)
+- [ ] T092 [US7] Create QuestionCard React component in src/components/Quiz/QuestionCard.tsx (renders question by type)
+- [ ] T093 [US7] Create QuizResults React component in src/components/Quiz/QuizResults.tsx (score display, feedback, explanations)
+- [ ] T094 [US7] Integrate QuizWidget at end of each chapter in src/theme/DocItem/index.tsx
+- [ ] T095 [US7] Run quiz generation script to create quizzes for all 13 chapters
+
+**Completion Criteria**:
+- Each chapter has 5-10 questions (multiple choice, true/false, code completion)
+- Immediate feedback after each answer (correct/incorrect with explanation)
+- Overall score displayed at quiz completion
+- Quiz attempts saved to user profile
+- Difficulty adapts to user's skill level (beginner/advanced)
+
+---
+
+## Dependencies and Execution Order
+
+### Critical Path (Must Complete Sequentially)
+1. **Phase 1 → Phase 2**: Setup must complete before foundational infrastructure
+2. **Phase 2 → Phase 3/4**: Foundational infrastructure required for all user stories
+3. **Phase 6 → Phase 7**: Authentication required for personalization (needs user profile)
+4. **Phase 6 → Phase 9**: Authentication required for quiz attempts (needs user tracking)
+
+### Independent User Stories (Can Implement in Parallel After Phase 2)
+- **Phase 3** (US1: Core Textbook): No dependencies after Phase 2
+- **Phase 4** (US2: RAG Chatbot): No dependencies after Phase 2
+- **Phase 5** (US3: Text Selection): Depends on Phase 4 (extends chatbot)
+- **Phase 8** (US6: Urdu Translation): No dependencies after Phase 2 (works with or without auth)
+
+### Parallel Execution Opportunities
+
+**Phase 1 (Setup)**: Tasks T002, T003, T004, T006, T007 can run in parallel (different files)
+
+**Phase 2 (Foundational)**: Tasks T010, T011, T013 can run in parallel (independent utilities)
+
+**Phase 3 (Content Writing)**: Tasks T017-T029 can run in parallel (independent chapter files) - **HIGHLY PARALLELIZABLE**
+
+**Phase 4 (RAG Chatbot)**: Tasks T031, T032, T033 can run in parallel (model definitions)
+
+---
+
+## Implementation Strategy
+
+### Recommended MVP Sprint (Hackathon Focus)
+
+**Day 1: Foundation**
+- Complete Phase 1 (Setup) and Phase 2 (Foundational) - 15 tasks
+- Deliverable: Running Docusaurus site + FastAPI backend with database
+
+**Day 2: Core Content**
+- Complete Phase 3 (Core Textbook) - 15 tasks
+- Focus on quality: 3-5 chapters with excellent content rather than rushed 13 chapters
+- Deliverable: Deployed textbook with 5+ high-quality chapters
+
+**Day 3: AI Features**
+- Complete Phase 4 (RAG Chatbot) - 12 tasks
+- Deliverable: Working chatbot with citations, <2s response time
+
+**Result**: Functional MVP demonstrating core value proposition (educational content + AI assistance)
+
+### Incremental Enhancement Sprints (Post-MVP)
+
+**Sprint 1: User Experience**
+- Phase 5 (Text Selection AI) - 8 tasks
+- Phase 6 (Auth + Progress) - 12 tasks
+
+**Sprint 2: Accessibility & Assessment**
+- Phase 8 (Urdu Translation) - 9 tasks
+- Phase 9 (Quiz System) - 14 tasks
+
+**Sprint 3: Advanced Personalization**
+- Phase 7 (Personalization) - 10 tasks
+
+---
+
+## Testing Strategy
+
+**Note**: Formal test tasks are not included in this breakdown as they were not explicitly requested in the specification. However, testing should be performed as follows:
+
+### Testing Approach (Manual Verification)
+
+1. **Phase 3 Completion**: Verify all chapters render correctly on desktop, tablet, mobile using browser dev tools
+2. **Phase 4 Completion**: Test chatbot with 10+ questions covering different topics, verify citations and response times
+3. **Phase 5 Completion**: Select text in 5 different contexts, verify explanations are relevant
+4. **Phase 6 Completion**: Create account, track progress across multiple sessions, verify data persists
+5. **Phase 7 Completion**: Test with beginner and advanced profiles, verify content adaptation quality
+6. **Phase 8 Completion**: Translate multiple chapters, verify RTL formatting and technical term accuracy
+7. **Phase 9 Completion**: Take quizzes for 5 chapters, verify feedback quality and score calculation
+
+### Automated Testing (Optional, If Time Permits)
+
+- **E2E Tests** (Playwright): Create tests for critical user journeys (signup, chatbot interaction, quiz taking)
+- **API Tests** (pytest): Test RAG service, auth endpoints, progress tracking
+- **Component Tests** (Jest): Test React components in isolation
+
+---
+
+## Success Metrics
+
+### MVP Success (Phase 1-4)
+- ✅ 10+ chapters deployed and accessible
+- ✅ Responsive design on mobile (test with browser dev tools)
+- ✅ Chatbot responds with citations in <2s
+- ✅ Follow-up questions work with context retention
+- ✅ Lighthouse accessibility score 90+ (run audit)
+
+### Full Implementation Success (All Phases)
+- ✅ All 7 user stories implemented
+- ✅ 33 functional requirements met
+- ✅ 15 success criteria achieved
+- ✅ Constitution principles validated (accessibility, AI enhancement, personalization, technical excellence)
+
+---
+
+## Risk Mitigation
+
+### High-Risk Tasks (Require External Services)
+
+1. **T034, T042** (Chapter Indexing): Depends on Qdrant Cloud availability
+   - **Mitigation**: Test Qdrant connection early (Phase 2), have fallback to local FAISS if cloud fails
+
+2. **T035** (RAG Service): Depends on OpenAI API availability and rate limits
+   - **Mitigation**: Implement exponential backoff, cache common queries, set up billing alerts
+
+3. **T055** (Auth Service): Depends on Better-auth.com service
+   - **Mitigation**: Start with simple JWT-based auth as fallback, migrate to Better-auth later
+
+4. **T074** (Translation Service): OpenAI API costs for translation
+   - **Mitigation**: Implement aggressive caching (translate once, store forever), limit to 3-5 chapters initially
+
+### Medium-Risk Tasks (Complexity)
+
+1. **T017-T029** (Chapter Content): Quality and quantity balance
+   - **Mitigation**: Focus on 5 excellent chapters for MVP rather than 13 rushed chapters
+
+2. **T035** (RAG Implementation): Citation extraction accuracy
+   - **Mitigation**: Use LangChain's pre-built citation patterns, validate with test questions
+
+3. **T064** (Personalization): Content adaptation quality
+   - **Mitigation**: Create clear prompt templates with examples, validate with test users
+
+---
+
+## Next Steps
+
+**To Begin Implementation**: Run `/sp.implement` to execute tasks sequentially or in parallel based on dependencies.
+
+**Recommended Starting Point**: Complete Phase 1 (Setup) and Phase 2 (Foundational), then focus on Phase 3 (Core Textbook content creation) using parallel execution for T017-T029.
+
+**Checkpoint After MVP**: After completing Phase 1-4, pause to demo the MVP, gather feedback, then prioritize remaining phases based on user needs.

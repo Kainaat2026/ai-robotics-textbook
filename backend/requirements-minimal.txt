@@ -1,0 +1,32 @@
+# Minimal requirements for initial setup
+# Install pre-compiled wheels to avoid compilation issues
+
+fastapi
+uvicorn[standard]
+python-multipart
+python-dotenv
+
+# Database
+asyncpg
+alembic
+sqlalchemy[asyncio]
+
+# Pydantic (will use latest compatible version)
+pydantic
+pydantic-settings
+
+# AI and RAG
+openai
+langchain
+langchain-openai
+qdrant-client
+
+# Security
+python-jose[cryptography]
+passlib[bcrypt]
+
+# Utilities
+httpx
+tenacity
+pytest
+pytest-asyncio

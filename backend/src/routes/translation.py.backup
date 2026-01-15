@@ -1,0 +1,127 @@
+"""Translation API endpoints."""
+
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from pydantic import BaseModel, Field
+from enum import Enum
+
+from src.db.connection import get_db
+from src.models.translation import Translation
+from src.services.translation_service import translation_service
+
+router = APIRouter()
+
+
+class TargetLanguage(str, Enum):
+    """Supported target languages."""
+    URDU = "ur"
+    ENGLISH = "en"
+
+
+class TranslateRequest(BaseModel):
+    """Request to translate content."""
+    content: str = Field(..., min_length=10, max_length=50000)
+    target_language: TargetLanguage = TargetLanguage.URDU
+    content_type: str = Field(default="chapter", max_length=50)
+
+
+class TranslateResponse(BaseModel):
+    """Translation response."""
+    translated_content: str
+    source_language: str
+    target_language: str
+    cached: bool
+    response_time_ms: int
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "translated_content": "# ROS 2 موضوعات\n\nموضوعات غیر مطابقت پذیر رابطے کو فعال کرتے ہیں...",
+                "source_language": "en",
+                "target_language": "ur",
+                "cached": False,
+                "response_time_ms": 4200
+            }
+        }
+
+
+@router.post("/translate", response_model=TranslateResponse)
+async def translate_content(
+    request: TranslateRequest,
+    db: AsyncSession = Depends(get_db)
+) -> TranslateResponse:
+    """
+    Translate content to target language.
+
+    Args:
+        request: Translation request
+        db: Database session
+
+    Returns:
+        Translated content with caching info
+
+    Example:
+        POST /api/translate
+        {
+            "content": "## ROS 2 Topics\n\nTopics enable...",
+            "target_language": "ur",
+            "content_type": "chapter"
+        }
+    """
+    # Only support English to Urdu for now
+    if request.target_language != TargetLanguage.URDU:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Currently only English to Urdu translation is supported"
+        )
+
+    source_language = "en"
+
+    # Generate content hash for caching
+    content_hash = translation_service.generate_content_hash(request.content)
+
+    # Check cache
+    stmt = select(Translation).where(
+        Translation.content_hash == content_hash,
+        Translation.source_language == source_language,
+        Translation.target_language == request.target_language.value
+    )
+    result = await db.execute(stmt)
+    cached_translation = result.scalar_one_or_none()
+
+    if cached_translation:
+        # Return cached translation
+        return TranslateResponse(
+            translated_content=cached_translation.translated_content,
+            source_language=source_language,
+            target_language=request.target_language.value,
+            cached=True,
+            response_time_ms=0
+        )
+
+    # Translate content
+    translated_content, response_time_ms = await translation_service.translate_to_urdu(
+        content=request.content,
+        content_type=request.content_type
+    )
+
+    # Cache translation
+    new_translation = Translation(
+        content_hash=content_hash,
+        source_language=source_language,
+        target_language=request.target_language.value,
+        source_content=request.content,
+        translated_content=translated_content,
+        content_type=request.content_type
+    )
+    db.add(new_translation)
+    await db.commit()
+
+    return TranslateResponse(
+        translated_content=translated_content,
+        source_language=source_language,
+        target_language=request.target_language.value,
+        cached=False,
+        response_time_ms=response_time_ms
+    )

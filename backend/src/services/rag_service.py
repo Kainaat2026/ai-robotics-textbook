@@ -1,0 +1,350 @@
+"""RAG (Retrieval-Augmented Generation) service for chatbot using Google Gemini."""
+
+import time
+import os
+from typing import List, Optional, Tuple
+from google import genai
+from google.genai import types
+from dotenv import load_dotenv
+
+from src.models.chapter import ChapterSearchResult
+from src.models.chat import Citation, Language
+from src.utils.vector_store import vector_store
+from src.utils.embeddings import embeddings_generator
+
+load_dotenv()
+
+
+class RAGService:
+    """
+    Retrieval-Augmented Generation service for textbook chatbot.
+
+    Workflow:
+    1. User asks question
+    2. Generate embedding for question
+    3. Retrieve relevant chunks from Qdrant
+    4. Build prompt with context
+    5. Generate answer with Gemini
+    6. Extract citations from sources
+    """
+
+    def __init__(self):
+        """Initialize RAG service with Gemini."""
+        # Initialize Gemini client
+        self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+        self.model_name = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+        self.temperature = 0.3
+        self.max_tokens = 500
+
+        # System prompts
+        self.system_prompt_en = """You are a helpful AI assistant for a Physical AI & Humanoid Robotics textbook.
+
+Your role:
+- Answer questions based ONLY on the provided context from the textbook
+- Always cite the chapter and section where you found the information
+- If the question cannot be answered from the context, politely say so and suggest relevant topics
+- Keep responses concise and educational
+- Use technical terms accurately
+
+Format your response as:
+1. Direct answer to the question
+2. Additional relevant details
+3. Citation(s) to source material"""
+
+        self.system_prompt_ur = """آپ فزیکل AI اور Humanoid Robotics کی textbook کے لیے ایک معاون AI اسسٹنٹ ہیں۔
+
+آپ کا کردار:
+- صرف textbook سے فراہم کردہ context کی بنیاد پر سوالات کے جواب دیں
+- ہمیشہ chapter اور section کا حوالہ دیں جہاں سے آپ نے معلومات حاصل کیں
+- اگر context سے سوال کا جواب نہیں دیا جا سکتا، شائستگی سے بتائیں اور متعلقہ topics تجویز کریں
+- جوابات مختصر اور تعلیمی رکھیں
+- تکنیکی اصطلاحات درست طریقے سے استعمال کریں"""
+
+    async def retrieve_context(
+        self,
+        query: str,
+        top_k: int = 3,
+        score_threshold: float = 0.7,
+        chapter_filter: Optional[str] = None
+    ) -> List[ChapterSearchResult]:
+        """
+        Retrieve relevant context from vector store.
+
+        Args:
+            query: User question
+            top_k: Number of chunks to retrieve
+            score_threshold: Minimum similarity score
+            chapter_filter: Optional chapter ID to filter results
+
+        Returns:
+            List of search results with content and metadata
+        """
+        # Generate embedding for query
+        query_embedding = await embeddings_generator.generate_embedding(query)
+
+        # Search Qdrant
+        results = await vector_store.search(
+            query_vector=query_embedding,
+            limit=top_k,
+            score_threshold=score_threshold,
+            chapter_filter=chapter_filter
+        )
+
+        # Convert to ChapterSearchResult objects
+        search_results = [
+            ChapterSearchResult(
+                chapter_id=r['chapter_id'],
+                chapter_title=r['chapter_title'],
+                section=r.get('section_heading'),
+                content=r['content'],
+                score=r['score'],
+                chunk_index=r['chunk_index']
+            )
+            for r in results
+        ]
+
+        return search_results
+
+    def build_prompt(
+        self,
+        query: str,
+        context_results: List[ChapterSearchResult],
+        conversation_history: Optional[List[dict]] = None,
+        language: Language = Language.ENGLISH
+    ) -> List[dict]:
+        """
+        Build prompt with context and conversation history.
+
+        Args:
+            query: User question
+            context_results: Retrieved context chunks
+            conversation_history: Previous messages for context
+            language: Response language
+
+        Returns:
+            List of message dictionaries
+        """
+        # Select system prompt based on language
+        system_prompt = self.system_prompt_en if language == Language.ENGLISH else self.system_prompt_ur
+
+        messages = [{"role": "system", "content": system_prompt}]
+
+        # Add conversation history (last 3 exchanges for context)
+        if conversation_history:
+            recent_history = conversation_history[-6:]  # Last 3 exchanges (6 messages)
+            for msg in recent_history:
+                messages.append({"role": msg['role'], "content": msg['content']})
+
+        # Build context from retrieved chunks
+        context_text = "\n\n---\n\n".join([
+            f"Source: {r.chapter_title} - {r.section or 'Introduction'}\n{r.content}"
+            for r in context_results
+        ])
+
+        # Build final user message with context
+        user_prompt = f"""Context from textbook:
+{context_text}
+
+Question: {query}
+
+Please answer based on the context provided above."""
+
+        messages.append({"role": "user", "content": user_prompt})
+
+        return messages
+
+    def extract_citations(self, context_results: List[ChapterSearchResult]) -> List[Citation]:
+        """
+        Extract citations from context results.
+
+        Args:
+            context_results: Search results used in response
+
+        Returns:
+            List of Citation objects
+        """
+        # Group by chapter to avoid duplicate citations
+        citations_dict = {}
+
+        for result in context_results:
+            key = result.chapter_id
+            if key not in citations_dict:
+                citations_dict[key] = Citation(
+                    chapter_id=result.chapter_id,
+                    section=result.section or "Introduction",
+                    title=result.chapter_title
+                )
+
+        return list(citations_dict.values())
+
+    async def generate_response(
+        self,
+        query: str,
+        conversation_history: Optional[List[dict]] = None,
+        language: Language = Language.ENGLISH,
+        chapter_filter: Optional[str] = None
+    ) -> Tuple[str, List[Citation], int, int]:
+        """
+        Generate chatbot response with RAG.
+
+        Args:
+            query: User question
+            conversation_history: Previous messages
+            language: Response language
+            chapter_filter: Optional chapter to search within
+
+        Returns:
+            Tuple of (response_text, citations, tokens_used, response_time_ms)
+        """
+        start_time = time.time()
+
+        # Step 1: Retrieve context
+        context_results = await self.retrieve_context(
+            query=query,
+            top_k=3,
+            chapter_filter=chapter_filter
+        )
+
+        if not context_results:
+            # No relevant context found
+            no_context_response = (
+                "I couldn't find information about this in the textbook. "
+                "This may be outside the course scope. Try asking about ROS 2, "
+                "Gazebo simulation, NVIDIA Isaac, or VLA systems."
+                if language == Language.ENGLISH else
+                "مجھے textbook میں اس کے بارے میں معلومات نہیں ملیں۔ "
+                "یہ course کے دائرے سے باہر ہو سکتا ہے۔ "
+                "ROS 2، Gazebo simulation، NVIDIA Isaac، یا VLA systems کے بارے میں پوچھیں۔"
+            )
+            return no_context_response, [], 0, int((time.time() - start_time) * 1000)
+
+        # Step 2: Build prompt
+        messages = self.build_prompt(
+            query=query,
+            context_results=context_results,
+            conversation_history=conversation_history,
+            language=language
+        )
+
+        # Step 3: Generate response with Gemini
+        # Build the prompt with system instruction and user messages
+        system_prompt = self.system_prompt_en if language == Language.ENGLISH else self.system_prompt_ur
+        prompt_text = self._messages_to_prompt(messages)
+
+        response = self.client.models.generate_content(
+            model=self.model_name,
+            contents=prompt_text,
+            config=types.GenerateContentConfig(
+                temperature=self.temperature,
+                max_output_tokens=self.max_tokens,
+                system_instruction=system_prompt
+            )
+        )
+        response_text = response.text
+
+        # Step 4: Extract citations
+        citations = self.extract_citations(context_results)
+
+        # Calculate metrics
+        tokens_used = 0  # Token usage tracking not available in same way
+        response_time_ms = int((time.time() - start_time) * 1000)
+
+        return response_text, citations, tokens_used, response_time_ms
+
+    async def generate_text_selection_explanation(
+        self,
+        selected_text: str,
+        chapter_id: str,
+        surrounding_context: Optional[str] = None,
+        language: Language = Language.ENGLISH
+    ) -> Tuple[str, List[Citation], int]:
+        """
+        Generate contextual explanation for selected text.
+
+        Args:
+            selected_text: Text user selected
+            chapter_id: Current chapter
+            surrounding_context: Text around selection
+            language: Response language
+
+        Returns:
+            Tuple of (explanation, citations, response_time_ms)
+        """
+        start_time = time.time()
+
+        # Build specific query for text selection
+        query = f"Explain '{selected_text}' in the context of {chapter_id}"
+
+        # Retrieve context from same chapter
+        context_results = await self.retrieve_context(
+            query=query,
+            top_k=2,
+            chapter_filter=chapter_id
+        )
+
+        # Build simplified prompt for text selection
+        system_prompt = (
+            "Provide a brief, clear explanation of the selected text in context."
+            if language == Language.ENGLISH else
+            "منتخب text کی context میں مختصر، واضح وضاحت فراہم کریں۔"
+        )
+
+        context_text = "\n".join([r.content for r in context_results])
+
+        prompt = f"""{system_prompt}
+
+Selected text: "{selected_text}"
+
+Context: {context_text}
+
+{f'Surrounding text: {surrounding_context}' if surrounding_context else ''}
+
+Provide a concise explanation (2-3 sentences)."""
+
+        # Generate with Gemini
+        response = self.client.models.generate_content(
+            model=self.model_name,
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                temperature=self.temperature,
+                max_output_tokens=300,
+                system_instruction=system_prompt
+            )
+        )
+
+        citations = self.extract_citations(context_results)
+        response_time_ms = int((time.time() - start_time) * 1000)
+
+        return response.text, citations, response_time_ms
+
+    def _messages_to_prompt(self, messages: List[dict]) -> str:
+        """
+        Convert message dicts to plain text prompt for Gemini.
+
+        Args:
+            messages: List of message dictionaries with 'role' and 'content'
+
+        Returns:
+            Formatted prompt string
+        """
+        prompt_parts = []
+
+        for msg in messages:
+            role = msg.get('role', 'user')
+            content = msg.get('content', '')
+
+            # Add role prefix for clarity
+            if role == 'system':
+                prompt_parts.append(f"Instructions: {content}")
+            elif role == 'user':
+                prompt_parts.append(f"User: {content}")
+            elif role == 'assistant':
+                prompt_parts.append(f"Assistant: {content}")
+            else:
+                prompt_parts.append(content)
+
+        return "\n\n".join(prompt_parts)
+
+
+# Global instance
+rag_service = RAGService()

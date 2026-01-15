@@ -1,0 +1,237 @@
+/**
+ * SelectionTooltip Styles
+ * Floating tooltip with smooth animations and responsive positioning
+ */
+
+.tooltip {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  z-index: 9999;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.2s ease-in-out;
+  max-width: 90vw;
+}
+
+.tooltip.expanded {
+  max-width: 500px;
+  min-width: 300px;
+}
+
+/* Ask AI Button */
+.askButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.askButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.askButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.askButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.icon {
+  flex-shrink: 0;
+}
+
+/* Loading Spinner */
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Explanation Display */
+.explanation {
+  padding: 16px;
+  background: white;
+  border-radius: 8px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  gap: 12px;
+}
+
+.selectedText {
+  font-weight: 600;
+  color: #667eea;
+  font-size: 14px;
+  flex: 1;
+  line-height: 1.4;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #999;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.closeButton:hover {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.explanationText {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.citations {
+  font-size: 12px;
+  color: #666;
+  border-top: 1px solid #e5e5e5;
+  padding-top: 12px;
+}
+
+.citations strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+.citations ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.citations li {
+  margin-bottom: 4px;
+}
+
+.citations a {
+  color: #667eea;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.citations a:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+.error {
+  color: #dc3545;
+  font-size: 14px;
+  padding: 8px 12px;
+  background: #f8d7da;
+  border-radius: 4px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-100% - 10px));
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -100%);
+  }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .tooltip {
+    max-width: 85vw;
+  }
+
+  .tooltip.expanded {
+    max-width: 85vw;
+    min-width: 280px;
+  }
+
+  .explanation {
+    padding: 12px;
+  }
+
+  .explanationText {
+    font-size: 13px;
+  }
+
+  .citations {
+    font-size: 11px;
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .tooltip {
+    background: #1e1e1e;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  .explanation {
+    background: #1e1e1e;
+  }
+
+  .explanationText {
+    color: #e5e5e5;
+  }
+
+  .citations {
+    color: #999;
+    border-top-color: #333;
+  }
+
+  .citations strong {
+    color: #e5e5e5;
+  }
+
+  .closeButton:hover {
+    background: #333;
+    color: #e5e5e5;
+  }
+
+  .error {
+    background: #3d1f1f;
+    color: #ff6b6b;
+  }
+}

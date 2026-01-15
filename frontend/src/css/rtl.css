@@ -1,0 +1,264 @@
+/**
+ * RTL (Right-to-Left) Styles for Urdu Language Support
+ *
+ * Applied when language is set to Urdu (ur)
+ */
+
+/* Root RTL Class */
+[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Typography */
+[dir="rtl"] body {
+  font-family: 'Noto Nastaliq Urdu', 'Arial', sans-serif;
+  text-align: right;
+}
+
+[dir="rtl"] h1,
+[dir="rtl"] h2,
+[dir="rtl"] h3,
+[dir="rtl"] h4,
+[dir="rtl"] h5,
+[dir="rtl"] h6 {
+  text-align: right;
+}
+
+/* Lists */
+[dir="rtl"] ul,
+[dir="rtl"] ol {
+  padding-right: 2em;
+  padding-left: 0;
+}
+
+[dir="rtl"] li {
+  text-align: right;
+}
+
+/* Navigation and UI Elements */
+[dir="rtl"] .navbar {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .menu {
+  text-align: right;
+}
+
+[dir="rtl"] .sidebar {
+  right: 0;
+  left: auto;
+}
+
+/* Buttons and Links */
+[dir="rtl"] button,
+[dir="rtl"] a {
+  text-align: right;
+}
+
+/* Code Blocks - Keep LTR for Code */
+[dir="rtl"] pre,
+[dir="rtl"] code,
+[dir="rtl"] .codeBlock {
+  direction: ltr;
+  text-align: left;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Inline Code in Urdu Text */
+[dir="rtl"] p code,
+[dir="rtl"] li code {
+  direction: ltr;
+  display: inline-block;
+  unicode-bidi: embed;
+}
+
+/* Margins and Padding Adjustments */
+[dir="rtl"] .margin-left {
+  margin-left: 0;
+  margin-right: var(--ifm-spacing-horizontal);
+}
+
+[dir="rtl"] .margin-right {
+  margin-right: 0;
+  margin-left: var(--ifm-spacing-horizontal);
+}
+
+[dir="rtl"] .padding-left {
+  padding-left: 0;
+  padding-right: var(--ifm-spacing-horizontal);
+}
+
+[dir="rtl"] .padding-right {
+  padding-right: 0;
+  padding-left: var(--ifm-spacing-horizontal);
+}
+
+/* Floats */
+[dir="rtl"] .float-left {
+  float: right;
+}
+
+[dir="rtl"] .float-right {
+  float: left;
+}
+
+/* Tables */
+[dir="rtl"] table {
+  direction: rtl;
+}
+
+[dir="rtl"] th,
+[dir="rtl"] td {
+  text-align: right;
+}
+
+/* Images and Media */
+[dir="rtl"] img {
+  /* Images stay as-is, but captions are RTL */
+}
+
+[dir="rtl"] .image-caption {
+  text-align: right;
+}
+
+/* Tooltips and Popovers */
+[dir="rtl"] .tooltip {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Icons */
+[dir="rtl"] .icon-arrow-left::before {
+  content: "→";
+}
+
+[dir="rtl"] .icon-arrow-right::before {
+  content: "←";
+}
+
+/* Breadcrumbs */
+[dir="rtl"] .breadcrumb {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .breadcrumb-separator::before {
+  content: "\\";
+  transform: scaleX(-1);
+}
+
+/* Search */
+[dir="rtl"] .search-input {
+  text-align: right;
+  padding-right: 2.5rem;
+  padding-left: 1rem;
+}
+
+[dir="rtl"] .search-icon {
+  right: auto;
+  left: 0.75rem;
+}
+
+/* Pagination */
+[dir="rtl"] .pagination {
+  flex-direction: row-reverse;
+}
+
+/* Chatbot Widget */
+[dir="rtl"] .chatbot-widget {
+  left: 20px;
+  right: auto;
+}
+
+[dir="rtl"] .chatbot-message {
+  text-align: right;
+}
+
+[dir="rtl"] .chatbot-message.user {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .chatbot-message.assistant {
+  flex-direction: row-reverse;
+}
+
+/* Selection Tooltip */
+[dir="rtl"] .selection-tooltip {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Quiz Components */
+[dir="rtl"] .quiz-question {
+  text-align: right;
+}
+
+[dir="rtl"] .quiz-options {
+  text-align: right;
+}
+
+/* Accessibility */
+[dir="rtl"] [role="navigation"] {
+  direction: rtl;
+}
+
+[dir="rtl"] [role="main"] {
+  direction: rtl;
+}
+
+/* Docusaurus Specific Overrides */
+[dir="rtl"] .navbar__items {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .navbar__brand {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+[dir="rtl"] .navbar__toggle {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+[dir="rtl"] .menu__list {
+  padding-right: 0;
+  padding-left: 0;
+}
+
+[dir="rtl"] .menu__link {
+  padding-right: var(--ifm-menu-link-padding-horizontal);
+  padding-left: var(--ifm-menu-link-padding-horizontal);
+}
+
+[dir="rtl"] .toc {
+  text-align: right;
+}
+
+[dir="rtl"] .theme-doc-toc-mobile {
+  text-align: right;
+}
+
+/* Code Block Buttons (Copy, etc.) */
+[dir="rtl"] .clean-btn {
+  left: 0.5rem;
+  right: auto;
+}
+
+/* Blockquotes */
+[dir="rtl"] blockquote {
+  border-left: none;
+  border-right: 4px solid var(--ifm-color-emphasis-300);
+  padding-right: 1rem;
+  padding-left: 0;
+}
+
+/* Admonitions */
+[dir="rtl"] .admonition {
+  text-align: right;
+}
+
+[dir="rtl"] .admonition-icon {
+  margin-left: 0.5rem;
+  margin-right: 0;
+}

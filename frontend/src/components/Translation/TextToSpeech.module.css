@@ -1,0 +1,80 @@
+.ttsContainer {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ttsButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.ttsButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.ttsButton:active {
+  transform: translateY(0);
+}
+
+.icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.label {
+  font-size: 14px;
+}
+
+.controls {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.controlButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.controlButton:hover {
+  background: #764ba2;
+  transform: scale(1.1);
+}
+
+.controlButton:active {
+  transform: scale(0.95);
+}
+
+/* RTL support for Urdu */
+[dir="rtl"] .ttsContainer {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .ttsButton {
+  flex-direction: row-reverse;
+}
