@@ -52,12 +52,13 @@ class UserProgress(Base):
 
 class QuizAttempt(Base):
     """
-    Individual quiz attempt record for detailed analytics.
+    Simple quiz attempt record for progress tracking.
 
-    Tracks each quiz attempt with full answer history.
+    Tracks quiz attempts by chapter without linking to the full quiz system.
+    Used by progress routes for basic score tracking.
     """
 
-    __tablename__ = "quiz_attempts"
+    __tablename__ = "chapter_quiz_attempts"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)

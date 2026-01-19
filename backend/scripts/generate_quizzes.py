@@ -17,7 +17,7 @@ import frontmatter
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.db.connection import get_async_session
+from src.db.connection import get_db, AsyncSessionLocal
 from src.models.quiz import Quiz, QuizQuestion, QuestionType, Difficulty
 from src.services.quiz_service import quiz_service
 
@@ -76,7 +76,7 @@ class QuizGenerator:
         content = chapter_data['content']
 
         if not learning_objectives:
-            print(f"  ⚠ Skipping: No learning objectives defined")
+            print(f"  [!] Skipping: No learning objectives defined")
             return False
 
         # Generate questions
@@ -90,13 +90,13 @@ class QuizGenerator:
         )
 
         if not questions_data:
-            print(f"  ✗ Failed to generate questions")
+            print(f"  [X] Failed to generate questions")
             return False
 
         print(f"  Generated {len(questions_data)} questions")
 
         # Save to database
-        async for db in get_async_session():
+        async with AsyncSessionLocal() as db:
             try:
                 # Check if quiz already exists
                 from sqlalchemy import select
@@ -122,13 +122,18 @@ class QuizGenerator:
 
                 # Create questions
                 for q_data in questions_data:
+                    # Handle correct_answer being a list (for code completion)
+                    correct_answer = q_data['correct_answer']
+                    if isinstance(correct_answer, list):
+                        correct_answer = ', '.join(str(a) for a in correct_answer)
+
                     question = QuizQuestion(
                         quiz_id=quiz.id,
                         order_index=q_data['order_index'],
                         question_text=q_data['question_text'],
                         question_type=QuestionType(q_data['question_type']),
                         options=q_data.get('options'),
-                        correct_answer=q_data['correct_answer'],
+                        correct_answer=str(correct_answer),
                         explanation=q_data.get('explanation'),
                         difficulty=Difficulty(q_data.get('difficulty', 'intermediate')),
                         points=q_data.get('points', 1)
@@ -136,11 +141,11 @@ class QuizGenerator:
                     db.add(question)
 
                 await db.commit()
-                print(f"  ✓ Saved quiz with {len(questions_data)} questions")
+                print(f"  [OK] Saved quiz with {len(questions_data)} questions")
                 return True
 
             except Exception as e:
-                print(f"  ✗ Database error: {e}")
+                print(f"  [X] Database error: {e}")
                 await db.rollback()
                 return False
 
@@ -162,7 +167,7 @@ class QuizGenerator:
                     successes += 1
                 print()  # Blank line between chapters
             except Exception as e:
-                print(f"  ✗ Error: {e}\n")
+                print(f"  [X] Error: {e}\n")
 
         print(f"\n=== Summary ===")
         print(f"Successfully generated: {successes}/{len(chapters)} quizzes")

@@ -1,0 +1,18 @@
+﻿{
+    "conversation_id":  "0d44454b-90a0-4592-a21c-9266ec15acc9",
+    "message":  "1. ROS 2 actions are the most complex communication pattern in ROS 2, designed for long-running tasks that provide feedback and can be canceled.\n2. They can be thought of as \"services with progress updates\" and are particularly suitable for operations such as robot navigation and manipulation. The ROS 2 Navigation Stack (Nav2) extensively utilizes actions.\n\n3. Citation(s):\n    * ROS 2 Actions - Long-Running Tasks with Feedback - Introduction\n    * ROS 2 Services - Request-Response Communication - Introduction",
+    "citations":  [
+                      {
+                          "chapter_id":  "chapter-05-ros2-actions",
+                          "section":  "Introduction",
+                          "title":  "ROS 2 Actions - Long-Running Tasks with Feedback"
+                      },
+                      {
+                          "chapter_id":  "chapter-04-ros2-services",
+                          "section":  "Introduction",
+                          "title":  "ROS 2 Services - Request-Response Communication"
+                      }
+                  ],
+    "tokens_used":  0,
+    "response_time_ms":  3080
+}

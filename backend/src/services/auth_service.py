@@ -6,11 +6,8 @@ from typing import Optional
 import uuid
 
 from jose import JWTError, jwt
-from passlib.context import CryptContext
+import bcrypt
 from fastapi import HTTPException, status
-
-# Password hashing context
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # JWT configuration from environment
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "your-secret-key-change-in-production")
@@ -39,7 +36,11 @@ class AuthService:
         Returns:
             Hashed password string
         """
-        return pwd_context.hash(password)
+        # Encode password to bytes and hash
+        password_bytes = password.encode('utf-8')
+        salt = bcrypt.gensalt()
+        hashed = bcrypt.hashpw(password_bytes, salt)
+        return hashed.decode('utf-8')
 
     @staticmethod
     def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -53,7 +54,12 @@ class AuthService:
         Returns:
             True if password matches, False otherwise
         """
-        return pwd_context.verify(plain_password, hashed_password)
+        try:
+            password_bytes = plain_password.encode('utf-8')
+            hashed_bytes = hashed_password.encode('utf-8')
+            return bcrypt.checkpw(password_bytes, hashed_bytes)
+        except Exception:
+            return False
 
     @staticmethod
     def create_access_token(

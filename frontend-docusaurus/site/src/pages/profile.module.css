@@ -1,0 +1,282 @@
+/**
+ * Profile Page Styles
+ */
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 4rem;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.card {
+  background: var(--ifm-background-surface-color);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  font-size: 1.75rem;
+  margin-bottom: 1.5rem;
+  color: var(--ifm-heading-color);
+}
+
+/* User Info Section */
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--ifm-color-emphasis-100);
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--ifm-color-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.userDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.email {
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-900);
+}
+
+.memberSince {
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-600);
+}
+
+/* Messages */
+.message {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.message.success {
+  background: var(--ifm-color-success-lightest, #e0f7e0);
+  color: var(--ifm-color-success-dark, #2e7d32);
+  border: 1px solid var(--ifm-color-success-light, #81c784);
+}
+
+.message.error {
+  background: var(--ifm-color-danger-lightest, #ffe0e0);
+  color: var(--ifm-color-danger-dark, #d32f2f);
+  border: 1px solid var(--ifm-color-danger-light, #ff8080);
+}
+
+/* Form */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  margin: 1rem 0 0.5rem;
+  color: var(--ifm-heading-color);
+  border-bottom: 2px solid var(--ifm-color-emphasis-200);
+  padding-bottom: 0.5rem;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-800);
+}
+
+/* Skill Options */
+.skillOptions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.skillOption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  border: 2px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  background: var(--ifm-background-color);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.skillOption:hover {
+  border-color: var(--ifm-color-primary-light);
+  background: var(--ifm-color-primary-lightest);
+}
+
+.skillOption.selected {
+  border-color: var(--ifm-color-primary);
+  background: var(--ifm-color-primary-lightest);
+}
+
+.skillLabel {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--ifm-color-emphasis-900);
+}
+
+.skillDesc {
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-600);
+  margin-top: 0.25rem;
+}
+
+/* Checkbox */
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  color: var(--ifm-color-emphasis-800);
+  cursor: pointer;
+}
+
+.checkbox {
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+}
+
+.helpText {
+  font-size: 0.8rem;
+  color: var(--ifm-color-emphasis-500);
+  margin-top: 0.25rem;
+}
+
+/* Select */
+.select {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 2px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  background: var(--ifm-background-color);
+  color: var(--ifm-color-emphasis-900);
+  cursor: pointer;
+  max-width: 200px;
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--ifm-color-primary);
+}
+
+/* Actions */
+.actions {
+  margin-top: 1rem;
+}
+
+.saveButton {
+  padding: 0.875rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background: var(--ifm-color-primary);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.saveButton:hover:not(:disabled) {
+  background: var(--ifm-color-primary-dark);
+}
+
+.saveButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Danger Zone */
+.divider {
+  margin: 2rem 0;
+  border: none;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.dangerZone {
+  margin-top: 1rem;
+}
+
+.dangerTitle {
+  font-size: 1rem;
+  color: var(--ifm-color-emphasis-700);
+  margin-bottom: 1rem;
+}
+
+.logoutButton {
+  padding: 0.75rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ifm-color-danger);
+  background: var(--ifm-color-danger-lightest, #ffe0e0);
+  border: 1px solid var(--ifm-color-danger-light);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.logoutButton:hover {
+  background: var(--ifm-color-danger);
+  color: white;
+}
+
+/* Dark mode */
+[data-theme='dark'] .card {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme='dark'] .userInfo {
+  background: var(--ifm-color-emphasis-200);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .card {
+    padding: 1.5rem;
+  }
+
+  .skillOptions {
+    grid-template-columns: 1fr;
+  }
+
+  .userInfo {
+    flex-direction: column;
+    text-align: center;
+  }
+}

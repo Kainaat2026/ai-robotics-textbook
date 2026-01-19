@@ -27,6 +27,36 @@ except Exception as e:
     traceback.print_exc()
     chatbot = None
 
+print("=== IMPORTING PROGRESS ROUTER ===")
+try:
+    from src.routes import progress
+    print(f"=== PROGRESS ROUTER IMPORTED SUCCESSFULLY ===")
+except Exception as e:
+    print(f"!!! PROGRESS ROUTER IMPORT FAILED: {type(e).__name__}: {e} !!!")
+    import traceback
+    traceback.print_exc()
+    progress = None
+
+print("=== IMPORTING QUIZ ROUTER ===")
+try:
+    from src.routes import quiz
+    print(f"=== QUIZ ROUTER IMPORTED SUCCESSFULLY ===")
+except Exception as e:
+    print(f"!!! QUIZ ROUTER IMPORT FAILED: {type(e).__name__}: {e} !!!")
+    import traceback
+    traceback.print_exc()
+    quiz = None
+
+print("=== IMPORTING AUTH ROUTER ===")
+try:
+    from src.routes import auth
+    print(f"=== AUTH ROUTER IMPORTED SUCCESSFULLY ===")
+except Exception as e:
+    print(f"!!! AUTH ROUTER IMPORT FAILED: {type(e).__name__}: {e} !!!")
+    import traceback
+    traceback.print_exc()
+    auth = None
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -123,6 +153,42 @@ else:
 print("=== REGISTERING TRANSLATION ROUTER ===")
 app.include_router(translation.router, prefix="/api", tags=["Translation"])
 print(f"=== TRANSLATION ROUTER REGISTERED ({len(translation.router.routes)} routes) ===")
+
+print("=== REGISTERING PROGRESS ROUTER ===")
+if progress is not None:
+    try:
+        app.include_router(progress.router, prefix="/api", tags=["Progress"])
+        print(f"=== PROGRESS ROUTER REGISTERED ({len(progress.router.routes)} routes) ===")
+    except Exception as e:
+        print(f"!!! PROGRESS ROUTER REGISTRATION FAILED: {type(e).__name__}: {e} !!!")
+        import traceback
+        traceback.print_exc()
+else:
+    print("!!! PROGRESS ROUTER WAS NOT IMPORTED - SKIPPING !!!")
+
+print("=== REGISTERING QUIZ ROUTER ===")
+if quiz is not None:
+    try:
+        app.include_router(quiz.router, prefix="/api", tags=["Quiz"])
+        print(f"=== QUIZ ROUTER REGISTERED ({len(quiz.router.routes)} routes) ===")
+    except Exception as e:
+        print(f"!!! QUIZ ROUTER REGISTRATION FAILED: {type(e).__name__}: {e} !!!")
+        import traceback
+        traceback.print_exc()
+else:
+    print("!!! QUIZ ROUTER WAS NOT IMPORTED - SKIPPING !!!")
+
+print("=== REGISTERING AUTH ROUTER ===")
+if auth is not None:
+    try:
+        app.include_router(auth.router, prefix="/api", tags=["Auth"])
+        print(f"=== AUTH ROUTER REGISTERED ({len(auth.router.routes)} routes) ===")
+    except Exception as e:
+        print(f"!!! AUTH ROUTER REGISTRATION FAILED: {type(e).__name__}: {e} !!!")
+        import traceback
+        traceback.print_exc()
+else:
+    print("!!! AUTH ROUTER WAS NOT IMPORTED - SKIPPING !!!")
 
 print(f"=== TOTAL APP ROUTES: {len(app.routes)} ===")
 

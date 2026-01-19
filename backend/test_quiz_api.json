@@ -1,0 +1,11 @@
+{
+  "chapter_content": "# ROS 2 Topics\n\nROS 2 Topics enable asynchronous communication between nodes using a publish-subscribe pattern. Publishers send messages to topics, and subscribers receive messages from topics.",
+  "chapter_title": "ROS 2 Topics and Message Types",
+  "learning_objectives": [
+    "Understand publish-subscribe pattern",
+    "Create publishers and subscribers",
+    "Visualize topic communication"
+  ],
+  "num_questions": 5,
+  "difficulty": "intermediate"
+}

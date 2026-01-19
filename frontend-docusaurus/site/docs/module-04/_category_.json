@@ -1,0 +1,8 @@
+{
+  "label": "Module 4: Humanoid Robotics & AI",
+  "position": 4,
+  "link": {
+    "type": "generated-index",
+    "description": "Build complete humanoid robot systems with Vision-Language-Action (VLA) models, conversational interfaces, and integrate all concepts in a capstone project."
+  }
+}

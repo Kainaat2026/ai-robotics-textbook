@@ -1,0 +1,5 @@
+{
+  "content": "ROS 2 Topics enable asynchronous communication between nodes using a publish-subscribe pattern. This is fundamental to robotics systems.",
+  "target_language": "ur",
+  "content_type": "chapter"
+}

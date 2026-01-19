@@ -51,7 +51,7 @@ class Quiz(Base):
 
     # Relationships
     questions = relationship("QuizQuestion", back_populates="quiz", cascade="all, delete-orphan", order_by="QuizQuestion.order_index")
-    attempts = relationship("QuizAttempt", back_populates="quiz", cascade="all, delete-orphan")
+    sessions = relationship("QuizSession", back_populates="quiz", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"<Quiz(id={self.id}, chapter={self.chapter_id}, questions={len(self.questions)})>"
@@ -79,11 +79,11 @@ class QuizQuestion(Base):
     quiz_id = Column(UUID(as_uuid=True), ForeignKey("quizzes.id", ondelete="CASCADE"), nullable=False)
     order_index = Column(Integer, nullable=False)
     question_text = Column(String(1000), nullable=False)
-    question_type = Column(SQLEnum(QuestionType), nullable=False)
+    question_type = Column(SQLEnum(QuestionType, values_callable=lambda x: [e.value for e in x]), nullable=False)
     options = Column(JSONB, nullable=True)  # Array of option strings
     correct_answer = Column(String(500), nullable=False)
     explanation = Column(String(2000), nullable=True)
-    difficulty = Column(SQLEnum(Difficulty), default=Difficulty.INTERMEDIATE, nullable=False)
+    difficulty = Column(SQLEnum(Difficulty, values_callable=lambda x: [e.value for e in x]), default=Difficulty.INTERMEDIATE, nullable=False)
     points = Column(Integer, default=1, nullable=False)
 
     # Relationships
@@ -94,20 +94,20 @@ class QuizQuestion(Base):
         return f"<QuizQuestion(id={self.id}, type={self.question_type}, difficulty={self.difficulty})>"
 
 
-class QuizAttempt(Base):
+class QuizSession(Base):
     """
-    User's quiz attempt.
+    User's quiz session with detailed tracking.
 
     Attributes:
-        id: Unique attempt identifier
+        id: Unique session identifier
         user_id: Foreign key to users table
         quiz_id: Foreign key to quiz
         score: Percentage score achieved
         points_earned: Total points earned
         total_points: Total points possible
         passed: Whether attempt passed
-        started_at: Attempt start timestamp
-        completed_at: Attempt completion timestamp
+        started_at: Session start timestamp
+        completed_at: Session completion timestamp
     """
     __tablename__ = "quiz_attempts"
 
@@ -122,7 +122,7 @@ class QuizAttempt(Base):
     completed_at = Column(DateTime(timezone=True), nullable=True)
 
     # Relationships
-    quiz = relationship("Quiz", back_populates="attempts")
+    quiz = relationship("Quiz", back_populates="sessions")
     responses = relationship("QuizResponse", back_populates="attempt", cascade="all, delete-orphan")
 
     def __repr__(self):
@@ -153,7 +153,7 @@ class QuizResponse(Base):
     answered_at = Column(DateTime(timezone=True), default=datetime.utcnow, nullable=False)
 
     # Relationships
-    attempt = relationship("QuizAttempt", back_populates="responses")
+    attempt = relationship("QuizSession", back_populates="responses")
     question = relationship("QuizQuestion", back_populates="responses")
 
     def __repr__(self):

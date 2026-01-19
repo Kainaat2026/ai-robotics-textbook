@@ -1,0 +1,8 @@
+{
+  "label": "Module 1: ROS 2 Fundamentals",
+  "position": 1,
+  "link": {
+    "type": "generated-index",
+    "description": "Learn the fundamentals of ROS 2 (Robot Operating System 2), the open-source robotics middleware that powers modern robots. This module covers nodes, topics, services, and actions."
+  }
+}

@@ -1,0 +1,264 @@
+/**
+ * Auth Forms Styles
+ */
+
+.formContainer {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: var(--ifm-background-surface-color, #fff);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  color: var(--ifm-heading-color);
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: var(--ifm-color-emphasis-600);
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-800);
+}
+
+.input,
+.select {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 2px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  background: var(--ifm-background-color);
+  color: var(--ifm-color-emphasis-900);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input:focus,
+.select:focus {
+  outline: none;
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 0 0 3px var(--ifm-color-primary-lightest);
+}
+
+.input::placeholder {
+  color: var(--ifm-color-emphasis-500);
+}
+
+.select {
+  cursor: pointer;
+}
+
+/* Skill Level Options */
+.skillOptions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.skillOption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  border: 2px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  background: var(--ifm-background-color);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.skillOption:hover {
+  border-color: var(--ifm-color-primary-light);
+  background: var(--ifm-color-primary-lightest);
+}
+
+.skillOption.selected {
+  border-color: var(--ifm-color-primary);
+  background: var(--ifm-color-primary-lightest);
+}
+
+.skillLabel {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--ifm-color-emphasis-900);
+}
+
+.skillDesc {
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-600);
+  margin-top: 0.25rem;
+}
+
+/* Checkbox */
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  color: var(--ifm-color-emphasis-800);
+  cursor: pointer;
+}
+
+.checkbox {
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+}
+
+.helpText {
+  font-size: 0.8rem;
+  color: var(--ifm-color-emphasis-500);
+  margin-top: 0.25rem;
+}
+
+/* Buttons */
+.primaryButton {
+  padding: 0.875rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background: var(--ifm-color-primary);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.primaryButton:hover:not(:disabled) {
+  background: var(--ifm-color-primary-dark);
+}
+
+.primaryButton:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.primaryButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.secondaryButton {
+  padding: 0.875rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-700);
+  background: var(--ifm-color-emphasis-100);
+  border: 2px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.secondaryButton:hover:not(:disabled) {
+  background: var(--ifm-color-emphasis-200);
+  border-color: var(--ifm-color-emphasis-400);
+}
+
+.secondaryButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.buttonGroup .secondaryButton {
+  flex: 1;
+}
+
+.buttonGroup .primaryButton {
+  flex: 2;
+}
+
+/* Link Button */
+.linkButton {
+  background: none;
+  border: none;
+  color: var(--ifm-color-primary);
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.linkButton:hover {
+  color: var(--ifm-color-primary-dark);
+}
+
+/* Switch Text */
+.switchText {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: var(--ifm-color-emphasis-600);
+  font-size: 0.95rem;
+}
+
+/* Error Message */
+.error {
+  padding: 0.75rem 1rem;
+  background: var(--ifm-color-danger-lightest, #ffe0e0);
+  border: 1px solid var(--ifm-color-danger-light, #ff8080);
+  border-radius: 8px;
+  color: var(--ifm-color-danger-dark, #d32f2f);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+/* Dark mode adjustments */
+[data-theme='dark'] .formContainer {
+  background: var(--ifm-background-surface-color, #1e1e1e);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme='dark'] .skillOption:hover {
+  background: rgba(var(--ifm-color-primary-rgb), 0.1);
+}
+
+[data-theme='dark'] .skillOption.selected {
+  background: rgba(var(--ifm-color-primary-rgb), 0.15);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .formContainer {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .skillOptions {
+    grid-template-columns: 1fr;
+  }
+
+  .buttonGroup {
+    flex-direction: column;
+  }
+
+  .buttonGroup .secondaryButton,
+  .buttonGroup .primaryButton {
+    flex: none;
+  }
+}

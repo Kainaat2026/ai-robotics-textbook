@@ -1,0 +1,8 @@
+{
+  "label": "Module 3: NVIDIA Isaac Platform",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "Explore NVIDIA's Isaac platform for AI-powered robotics. Learn Isaac SDK, Isaac Sim, and techniques for sim-to-real transfer of trained robot policies."
+  }
+}

@@ -16,7 +16,7 @@ from google.genai import types
 from dotenv import load_dotenv
 
 from src.models.quiz import QuestionType, Difficulty
-from src.models.user import SkillLevel
+from src.models.user_profile import SkillLevel
 
 load_dotenv()
 
@@ -31,9 +31,9 @@ class QuizService:
     def __init__(self):
         """Initialize quiz service with Gemini."""
         self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-        self.model_name = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+        self.model_name = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
         self.temperature = 0.7  # Creative but consistent question generation
-        self.max_tokens = 3000
+        self.max_tokens = 8000  # Increased for complete JSON responses
 
         self.generation_prompt = """You are an expert educational assessment creator for robotics and AI content.
 
@@ -135,16 +135,26 @@ Output as valid JSON following the format specified."""
         # Parse JSON response
         try:
             # Extract JSON from response (handle markdown code blocks)
+            # Look for the last ``` which closes the JSON block
             if "```json" in content:
                 json_start = content.find("```json") + 7
-                json_end = content.find("```", json_start)
-                json_str = content[json_start:json_end].strip()
-            elif "```" in content:
-                json_start = content.find("```") + 3
-                json_end = content.find("```", json_start)
-                json_str = content[json_start:json_end].strip()
-            else:
+                # Find the closing ``` by looking for it at the end of the response
+                json_end = content.rfind("```")
+                if json_end > json_start:
+                    json_str = content[json_start:json_end].strip()
+                else:
+                    json_str = content[json_start:].strip()
+            elif content.strip().startswith("{"):
+                # Direct JSON without markdown
                 json_str = content.strip()
+            else:
+                # Try to find JSON object in response
+                brace_start = content.find("{")
+                brace_end = content.rfind("}") + 1
+                if brace_start != -1 and brace_end > brace_start:
+                    json_str = content[brace_start:brace_end]
+                else:
+                    json_str = content.strip()
 
             data = json.loads(json_str)
             questions = data.get("questions", [])
