@@ -43,7 +43,16 @@
       "Bash(npm install:*)",
       "Bash(npx vercel login)",
       "Bash(npx vercel:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nComplete AI-Powered Textbook with all features\n\n- All 95 tasks completed across 9 phases\n- 13 chapters across 4 modules \\(ROS 2, Simulation, Isaac, VLA\\)\n- RAG Chatbot with citations\n- Urdu Translation \\(Google Gemini\\)\n- Quiz System with auto-generation\n- User Authentication & Progress Tracking\n- Text Selection AI\n- Personalization by skill level\n- Frontend: Docusaurus + React components\n- Backend: FastAPI with all routes\n- Vercel deployment configs added\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(gh auth status:*)",
+      "Bash(gh repo create:*)",
+      "Bash(start \"\" \"http://127.0.0.1:3000\")",
+      "Bash(start cmd:*)",
+      "Bash(start http://localhost:3001)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd GitHub Actions workflows\n\n- deploy-frontend.yml: Deploy Docusaurus to GitHub Pages\n- backend-ci.yml: Run backend tests and lint checks\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push)",
+      "Bash(start https://github.com/Kainaat2026/ai-robotics-textbook/actions)"
     ]
   }
 }
