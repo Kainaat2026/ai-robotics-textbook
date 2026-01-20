@@ -32,8 +32,10 @@ class TranslationService:
 
     def __init__(self):
         """Initialize translation service with Gemini."""
-        self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-        self.model_name = os.getenv("GEMINI_MODEL", "models/gemini-2.5-flash")
+        # Support both GOOGLE_API_KEY and GEMINI_API_KEY for flexibility
+        api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
+        self.client = genai.Client(api_key=api_key)
+        self.model_name = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
         self.temperature = 0.2  # Low temperature for consistent translations
         self.max_tokens = 4000
 

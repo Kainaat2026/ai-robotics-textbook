@@ -17,6 +17,7 @@ openai==1.10.0
 langchain==0.1.4
 langchain-openai==0.0.3
 qdrant-client>=1.7.1
+google-genai>=1.0.0
 
 # Authentication and Security
 python-jose[cryptography]==3.3.0

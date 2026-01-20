@@ -20,6 +20,7 @@ openai
 langchain
 langchain-openai
 qdrant-client
+google-genai
 
 # Security
 python-jose[cryptography]
