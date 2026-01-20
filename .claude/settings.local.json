@@ -52,7 +52,9 @@
       "Bash(start http://localhost:3001)",
       "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd GitHub Actions workflows\n\n- deploy-frontend.yml: Deploy Docusaurus to GitHub Pages\n- backend-ci.yml: Run backend tests and lint checks\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(git push)",
-      "Bash(start https://github.com/Kainaat2026/ai-robotics-textbook/actions)"
+      "Bash(start https://github.com/Kainaat2026/ai-robotics-textbook/actions)",
+      "Bash(start https://github.com/Kainaat2026/ai-robotics-textbook/settings/pages)",
+      "Bash(git commit:*)"
     ]
   }
 }
