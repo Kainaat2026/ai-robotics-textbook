@@ -54,7 +54,8 @@
       "Bash(git push)",
       "Bash(start https://github.com/Kainaat2026/ai-robotics-textbook/actions)",
       "Bash(start https://github.com/Kainaat2026/ai-robotics-textbook/settings/pages)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(start https://kainaat2026.github.io/ai-robotics-textbook/)"
     ]
   }
 }

@@ -20,14 +20,14 @@ const config = {
   },
 
   // Set the production url of your site here
-  url: 'https://physical-ai-textbook.example.com',
+  url: 'https://kainaat2026.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/',
+  baseUrl: '/ai-robotics-textbook/',
 
   // GitHub pages deployment config.
-  organizationName: 'physical-ai-textbook',
-  projectName: 'textbook',
+  organizationName: 'Kainaat2026',
+  projectName: 'ai-robotics-textbook',
 
   onBrokenLinks: 'warn',
 
