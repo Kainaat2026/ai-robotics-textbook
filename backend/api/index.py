@@ -1,34 +1,53 @@
-"""Vercel serverless entry point for FastAPI."""
-import sys
-import os
+"""Minimal Vercel test."""
+from fastapi import FastAPI
+from fastapi.responses import JSONResponse
 
-# Add the backend directory to the path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+app = FastAPI()
 
-try:
-    from src.main import app
-    handler = app
-except Exception as e:
-    # If import fails, create a minimal app that shows the error
-    from fastapi import FastAPI
-    from fastapi.responses import JSONResponse
-    import traceback
+@app.get("/")
+async def root():
+    return {"status": "ok", "message": "Minimal test working"}
 
-    error_app = FastAPI()
-    error_message = f"{type(e).__name__}: {str(e)}"
-    error_traceback = traceback.format_exc()
+@app.get("/health")
+async def health():
+    return {"status": "healthy"}
 
-    @error_app.get("/{path:path}")
-    async def catch_all(path: str = ""):
-        return JSONResponse(
-            status_code=500,
-            content={
-                "error": error_message,
-                "traceback": error_traceback,
-                "python_path": sys.path[:5],
-                "cwd": os.getcwd(),
-            }
-        )
+@app.get("/test-import")
+async def test_import():
+    """Test importing the main app."""
+    import sys
+    import os
 
-    app = error_app
-    handler = error_app
+    results = {
+        "cwd": os.getcwd(),
+        "python_path": sys.path[:5],
+        "files_in_cwd": [],
+        "src_exists": False,
+        "import_error": None
+    }
+
+    try:
+        results["files_in_cwd"] = os.listdir(".")[:10]
+    except Exception as e:
+        results["files_in_cwd"] = str(e)
+
+    try:
+        results["src_exists"] = os.path.exists("src")
+        if results["src_exists"]:
+            results["src_contents"] = os.listdir("src")[:10]
+    except Exception as e:
+        results["src_exists"] = str(e)
+
+    try:
+        sys.path.insert(0, os.getcwd())
+        from src.main import app as main_app
+        results["import_success"] = True
+        results["routes_count"] = len(main_app.routes)
+    except Exception as e:
+        import traceback
+        results["import_error"] = str(e)
+        results["import_traceback"] = traceback.format_exc()
+
+    return results
+
+handler = app
