@@ -3,10 +3,10 @@
  */
 import axios from 'axios';
 
-// API base URL - uses environment variable or falls back to localhost
+// API base URL - uses environment variable or falls back to HF Spaces production URL
 const API_BASE_URL = typeof window !== 'undefined'
-  ? (process.env.REACT_APP_API_URL || window.ENV?.API_URL || 'http://localhost:8000/api')
-  : (process.env.API_URL || 'http://localhost:8000/api');
+  ? (process.env.REACT_APP_API_URL || window.ENV?.API_URL || 'https://kainat2026-ai-robotics-textbook-api.hf.space/api')
+  : (process.env.API_URL || 'https://kainat2026-ai-robotics-textbook-api.hf.space/api');
 
 // Create axios instance with defaults
 const apiClient = axios.create({
