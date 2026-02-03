@@ -8,6 +8,11 @@ import {themes as prismThemes} from 'prism-react-renderer';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
+// Support different deployment targets via environment variables
+const isVercel = process.env.VERCEL === '1';
+const siteUrl = process.env.SITE_URL || (isVercel ? 'https://ai-robotics-textbook.vercel.app' : 'https://kainaat2026.github.io');
+const baseUrl = process.env.BASE_URL || (isVercel ? '/' : '/ai-robotics-textbook/');
+
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Physical AI & Humanoid Robotics',
@@ -19,11 +24,10 @@ const config = {
     v4: true, // Improve compatibility with the upcoming Docusaurus v4
   },
 
-  // Set the production url of your site here
-  url: 'https://kainaat2026.github.io',
+  // Set the production url of your site here (supports Vercel and GitHub Pages)
+  url: siteUrl,
   // Set the /<baseUrl>/ pathname under which your site is served
-  // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/ai-robotics-textbook/',
+  baseUrl: baseUrl,
 
   // GitHub pages deployment config.
   organizationName: 'Kainaat2026',
