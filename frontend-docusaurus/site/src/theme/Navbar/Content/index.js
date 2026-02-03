@@ -10,7 +10,7 @@ import NavbarColorModeToggle from '@theme/Navbar/ColorModeToggle';
 import NavbarMobileSidebarToggle from '@theme/Navbar/MobileSidebar/Toggle';
 import NavbarLogo from '@theme/Navbar/Logo';
 import NavbarSearch from '@theme/Navbar/Search';
-import NavbarUser from '../../components/NavbarUser';
+import NavbarUser from '../../../components/NavbarUser';
 import styles from './styles.module.css';
 
 function useNavbarItems() {

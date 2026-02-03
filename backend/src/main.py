@@ -94,14 +94,11 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Configure CORS - include GitHub Pages production URL
-default_origins = "http://localhost:3000,http://localhost:3001,https://kainaat2026.github.io"
-CORS_ORIGINS = os.getenv("CORS_ORIGINS", default_origins).split(",")
-
+# Configure CORS - allow all origins in development
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=CORS_ORIGINS,
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )

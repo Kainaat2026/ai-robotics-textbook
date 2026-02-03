@@ -3,6 +3,7 @@
  * Shows sign in link or user menu based on auth state
  */
 import React, { useState, useRef, useEffect } from 'react';
+import Link from '@docusaurus/Link';
 import { useAuth } from '../../contexts/AuthContext';
 import styles from './NavbarUser.module.css';
 
@@ -29,8 +30,8 @@ export default function NavbarUser() {
   if (!isAuthenticated) {
     return (
       <div className={styles.authLinks}>
-        <a href="/signin" className={styles.signInLink}>Sign In</a>
-        <a href="/signup" className={styles.signUpLink}>Sign Up</a>
+        <Link to="/signin" className={styles.signInLink}>Sign In</Link>
+        <Link to="/signup" className={styles.signUpLink}>Sign Up</Link>
       </div>
     );
   }
@@ -63,12 +64,12 @@ export default function NavbarUser() {
             )}
           </div>
           <hr className={styles.divider} />
-          <a href="/progress" className={styles.menuItem}>
+          <Link to="/progress" className={styles.menuItem}>
             My Progress
-          </a>
-          <a href="/profile" className={styles.menuItem}>
+          </Link>
+          <Link to="/profile" className={styles.menuItem}>
             Edit Profile
-          </a>
+          </Link>
           <hr className={styles.divider} />
           <button onClick={logout} className={styles.logoutButton}>
             Sign Out

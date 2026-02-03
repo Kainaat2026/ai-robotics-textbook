@@ -99,27 +99,6 @@ const config = {
             label: 'Get Started',
             position: 'left',
           },
-          {
-            to: '/progress',
-            label: 'My Progress',
-            position: 'right',
-          },
-          {
-            to: '/profile',
-            label: 'Profile',
-            position: 'right',
-          },
-          {
-            to: '/signin',
-            label: 'Sign In',
-            position: 'right',
-          },
-          {
-            to: '/signup',
-            label: 'Sign Up',
-            position: 'right',
-            className: 'navbar-signup-btn',
-          },
         ],
       },
       footer: {

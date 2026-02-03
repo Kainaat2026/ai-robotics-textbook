@@ -120,6 +120,69 @@
   transform: translateY(-1px);
 }
 
+/* Language Selector */
+.languageSelector {
+  position: relative;
+}
+
+.languageMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 0.5rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  min-width: 180px;
+  z-index: 1000;
+}
+
+.languageOption {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: white;
+  color: #333;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.languageOption:hover {
+  background: #f0f0f0;
+}
+
+.languageOption.selected {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.langNative {
+  font-weight: 600;
+}
+
+.langName {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+[data-theme='dark'] .languageMenu {
+  background: #2d3748;
+}
+
+[data-theme='dark'] .languageOption {
+  background: #2d3748;
+  color: #e2e8f0;
+}
+
+[data-theme='dark'] .languageOption:hover {
+  background: #4a5568;
+}
+
 /* Error Message */
 .error {
   margin-top: 0.5rem;

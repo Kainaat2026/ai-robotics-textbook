@@ -3,10 +3,22 @@
  */
 import axios from 'axios';
 
-// API base URL - uses environment variable or falls back to HF Spaces production URL
-const API_BASE_URL = typeof window !== 'undefined'
-  ? (process.env.REACT_APP_API_URL || window.ENV?.API_URL || 'https://kainat2026-ai-robotics-textbook-api.hf.space/api')
-  : (process.env.API_URL || 'https://kainat2026-ai-robotics-textbook-api.hf.space/api');
+// API base URL - uses window location to determine environment
+const getApiBaseUrl = () => {
+  if (typeof window === 'undefined') {
+    return 'http://localhost:8000/api';
+  }
+  // Check for explicit config first
+  if (window.ENV?.API_URL) return window.ENV.API_URL;
+  // Use same hostname as the page for development (localhost or 127.0.0.1)
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    return `http://${window.location.hostname}:8000/api`;
+  }
+  // Production: HF Spaces
+  return 'https://kainat2026-ai-robotics-textbook-api.hf.space/api';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 // Create axios instance with defaults
 const apiClient = axios.create({
@@ -35,7 +47,9 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     // Log errors in development
-    if (process.env.NODE_ENV === 'development') {
+    const isDev = typeof window !== 'undefined' &&
+      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+    if (isDev) {
       console.error('API Error:', error.response?.data || error.message);
     }
     return Promise.reject(error);
